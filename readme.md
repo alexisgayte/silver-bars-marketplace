@@ -27,7 +27,7 @@ To build the lib execute the following command:
 the lib is build in your .m2 repository.
 
 
-### Using the application
+## Using the application
 
 you can import the lib via maven adding the depedency :
 
@@ -49,7 +49,7 @@ dependencies {
 
 ```
 
-### Usage 
+## Usage 
 
 Order can be created via the builder `Order.OrderBuilder.builder()` cf test.
 
