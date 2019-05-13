@@ -7,6 +7,7 @@ import com.silverbars.domain.Order;
 import com.silverbars.domain.Order.OrderBuilder;
 import com.silverbars.domain.Order.Type;
 import com.silverbars.domain.Summary;
+import com.silverbars.service.impl.LiveOrderBoardImpl;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +16,7 @@ import static com.silverbars.domain.Order.Type.BUY;
 import static com.silverbars.domain.Order.Type.SELL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final public class LiveOrderBoardTest {
+final public class LiveOrderBoardImplTest {
 
     OrderBuilder orderBuilder;
 
@@ -30,7 +31,7 @@ final public class LiveOrderBoardTest {
                         .type(BUY)
                         .userId(1111l);
 
-        liveOrderBoard = new LiveOrderBoard();
+        liveOrderBoard = new LiveOrderBoardImpl();
 
     }
 
