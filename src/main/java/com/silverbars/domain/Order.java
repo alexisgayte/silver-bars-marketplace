@@ -13,7 +13,7 @@ public final class Order {
     public class OrderKey {
         @Override
         public int hashCode() {
-            return new Long(pricePerKg).hashCode() * type.demoninator;
+            return Long.hashCode(pricePerKg) * type.demoninator;
         }
 
         private OrderKey() {
