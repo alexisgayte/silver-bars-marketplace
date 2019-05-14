@@ -72,8 +72,8 @@ public final class Order {
     public static class OrderBuilder {
 
         private long userId;
-        private long quantity;
-        private long pricePerKg;
+        private BigDecimal quantity;
+        private BigDecimal pricePerKg;
         private Type type;
 
         public OrderBuilder userId(long userId) {
@@ -82,12 +82,12 @@ public final class Order {
         }
 
         public OrderBuilder quantity(BigDecimal quantity) {
-            this.quantity = quantity.movePointRight(3).intValue();
+            this.quantity = quantity;
             return this;
         }
 
         public OrderBuilder pricePerKg(BigDecimal pricePerKg) {
-            this.pricePerKg = pricePerKg.movePointRight(2).intValue();
+            this.pricePerKg = pricePerKg;
             return this;
         }
 
@@ -97,11 +97,24 @@ public final class Order {
         }
 
         public Order build() {
-            if (type == null) {
+            if (type == null || quantity == null || pricePerKg == null) {
                 throw new NullPointerException();
             }
 
-            return new Order(UUID.randomUUID(), userId, quantity, pricePerKg, type);
+            if (quantity.scale() > 3) {
+                throw new IllegalArgumentException();
+            }
+
+
+            if (pricePerKg.scale() > 2) {
+                throw new IllegalArgumentException();
+            }
+
+            return new Order(UUID.randomUUID(),
+                             userId,
+                             quantity.movePointRight(3).intValue(),
+                             pricePerKg.movePointRight(2).intValue(),
+                             type);
         }
     }
 }

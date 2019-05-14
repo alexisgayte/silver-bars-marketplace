@@ -39,23 +39,24 @@ public class OrderTest {
 
 
     @Test
-    public void should_truncate_wrong_price() throws Exception {
+    public void should_return_illegal_argument_when_wrong_price() throws Exception {
 
-        Order order = orderBuilder
-                            .pricePerKg(new BigDecimal("303.011"))
-                            .build();
+        orderBuilder.pricePerKg(new BigDecimal("303.011"));
 
-        assertEquals(order.getPricePerKg(), 30301l);
+        assertThrows(IllegalArgumentException.class, () -> {
+            orderBuilder.build();
+        });
+
     }
 
     @Test
-    public void should_truncate_wrong_quantity() throws Exception {
+    public void should_return_illegal_argument_when_wrong_quantity() throws Exception {
 
-        Order order = orderBuilder
-                            .quantity(new BigDecimal("30.0011"))
-                            .build();
+        orderBuilder.quantity(new BigDecimal("30.0011"));
 
-        assertEquals(order.getQuantity(), 30001l);
+        assertThrows(IllegalArgumentException.class, () -> {
+            orderBuilder.build();
+        });
     }
 
     @Test
@@ -65,6 +66,6 @@ public class OrderTest {
 
         assertThrows(NullPointerException.class, () -> {
             orderBuilder.build();
-          });
+        });
     }
 }
