@@ -25,7 +25,7 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
         Map<Order.OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(order.getType());
 
         Order insideorder = orderBoard.computeIfAbsent(order.getKey(), k -> new ConcurrentHashMap<UUID, Order>())
-                .computeIfAbsent(order.getUuid(), k -> order);
+                                      .computeIfAbsent(order.getUuid(), k -> order);
 
         if (!insideorder.equals(order)) {
             throw new RuntimeException();
