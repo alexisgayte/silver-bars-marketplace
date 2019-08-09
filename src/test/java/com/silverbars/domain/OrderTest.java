@@ -3,7 +3,6 @@ package com.silverbars.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.silverbars.domain.Order.OrderBuilder;
 import com.silverbars.domain.Order.Type;
 
 import java.math.BigDecimal;
@@ -18,7 +17,7 @@ public class OrderTest {
     @BeforeEach
     public void setup() {
 
-        orderBuilder = Order.builder()
+        orderBuilder = OrderBuilder.builder()
             .pricePerKg(new BigDecimal("303"))
             .quantity(new BigDecimal("10.33"))
             .type(Type.BUY)

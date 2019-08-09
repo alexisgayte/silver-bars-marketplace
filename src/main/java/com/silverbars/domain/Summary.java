@@ -1,13 +1,25 @@
 package com.silverbars.domain;
 
-import lombok.Data;
-
-@Data
 public final class Summary {
 
     long quantity;
     long pricePerKg;
 
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
+    public long getPricePerKg() {
+        return pricePerKg;
+    }
+
+    public void setPricePerKg(long pricePerKg) {
+        this.pricePerKg = pricePerKg;
+    }
 
     public String toString() {
         return quantity/1000d + "kg for £" + pricePerKg/100d;

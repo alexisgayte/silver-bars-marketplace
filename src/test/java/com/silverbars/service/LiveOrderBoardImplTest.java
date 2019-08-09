@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.silverbars.domain.Order;
-import com.silverbars.domain.Order.OrderBuilder;
 import com.silverbars.domain.Order.Type;
+import com.silverbars.domain.OrderBuilder;
 import com.silverbars.domain.Summary;
 import com.silverbars.service.impl.LiveOrderBoardImpl;
 
@@ -25,7 +25,7 @@ final public class LiveOrderBoardImplTest {
     @BeforeEach
     public void setup() {
 
-        orderBuilder = Order.builder()
+        orderBuilder = OrderBuilder.builder()
                         .pricePerKg(new BigDecimal("303"))
                         .quantity(new BigDecimal("10.33"))
                         .type(BUY)

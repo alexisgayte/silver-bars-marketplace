@@ -14,17 +14,17 @@ import java.util.function.BiConsumer;
 
 final public class LiveOrderBoardImpl implements LiveOrderBoard  {
 
-    Map<Order.OrderKey, Map<UUID, Order>> sellOrderBoard = new ConcurrentHashMap<>();
+    private final Map<OrderKey, Map<UUID, Order>> sellOrderBoard = new ConcurrentHashMap<>();
 
-    Map<Order.OrderKey, Map<UUID, Order>> buyOrderBoard = new ConcurrentHashMap<>();
+    private final Map<OrderKey, Map<UUID, Order>> buyOrderBoard = new ConcurrentHashMap<>();
 
 
     @Override
     public void register(Order order) {
 
-        Map<Order.OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(order.getType());
+        Map<OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(order.getType());
 
-        Order insideorder = orderBoard.computeIfAbsent(order.getKey(), k -> new ConcurrentHashMap<UUID, Order>())
+        Order insideorder = orderBoard.computeIfAbsent(new OrderKey(order), k -> new ConcurrentHashMap<UUID, Order>())
                                       .computeIfAbsent(order.getUuid(), k -> order);
 
         if (!insideorder.equals(order)) {
@@ -35,8 +35,8 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
 
     @Override
     public void cancel(Order order) {
-        Map<Order.OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(order.getType());
-        orderBoard.computeIfPresent(order.getKey(), (i, mapOrder) -> {
+        Map<OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(order.getType());
+        orderBoard.computeIfPresent(new OrderKey(order), (i, mapOrder) -> {
             mapOrder.remove(order.getUuid());
             return mapOrder.isEmpty() ? null : mapOrder;
         });
@@ -47,18 +47,18 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
     @Override
     public List<Summary> summary(Type type) {
 
-        Map<Order.OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(type);
+        Map<OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(type);
         List<Summary> summary = new ArrayList<>(orderBoard.size());
         orderBoard.forEach(populateSummary(summary));
 
         return summary;
     }
 
-    private BiConsumer<? super Order.OrderKey, ? super Map<UUID, Order>> populateSummary(List<Summary> buySummary) {
+    private BiConsumer<? super OrderKey, ? super Map<UUID, Order>> populateSummary(List<Summary> buySummary) {
         return (key, v) -> {
             long grams = v.values().stream().mapToLong(Order::getQuantity).sum();
             Summary summary = new Summary();
-            summary.setPricePerKg(key.pricePerKg());
+            summary.setPricePerKg(key.getPricePerKg());
             summary.setQuantity(grams);
 
             buySummary.add(summary);
@@ -66,8 +66,8 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
     }
 
 
-    private Map<Order.OrderKey, Map<UUID, Order>> selectOrderBoard(Type type) {
-        Map<Order.OrderKey, Map<UUID, Order>> orderBoard;
+    private Map<OrderKey, Map<UUID, Order>> selectOrderBoard(Type type) {
+        Map<OrderKey, Map<UUID, Order>> orderBoard;
         switch (type) {
         case BUY:
             orderBoard = buyOrderBoard;

@@ -1,120 +1,63 @@
 package com.silverbars.domain;
 
-import lombok.Builder;
-import lombok.Value;
-
-import java.math.BigDecimal;
 import java.util.UUID;
 
-@Value
-@Builder
 public final class Order {
 
-    public class OrderKey {
-        @Override
-        public int hashCode() {
-            return Long.hashCode(pricePerKg) * type.demoninator;
-        }
-
-        private OrderKey() {
-            super();
-        }
-
-        public long pricePerKg() {
-            return pricePerKg;
-        }
-
-        long demoninator() {
-            return type.demoninator;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) return true;
-            if (!(o instanceof OrderKey)) return false;
-            OrderKey other = (OrderKey) o;
-            if (pricePerKg != other.pricePerKg()) return false;
-            if (type.demoninator != other.demoninator()) return false;
-            return true;
-        }
-    }
-
     public enum Type {
-        BUY(1), SELL(-1);
-
-        int demoninator;
-
-        private Type(int demoninator) {
-            this.demoninator = demoninator;
-        }
+        BUY, SELL;
     }
 
-    UUID uuid;
-    long userId;
-    long quantity;
-    long pricePerKg;
-    Type type;
+    private final UUID uuid;
+    private final long userId;
+    private final long quantity;
+    private final long pricePerKg;
+    private final Type type;
 
-    private Order(UUID uuid, long userId, long quantity, long pricePerKg, Type type) {
+    Order(UUID uuid, long userId, long quantity, long pricePerKg, Type type) {
         this.uuid = uuid;
         this.userId = userId;
         this.quantity = quantity;
         this.pricePerKg = pricePerKg;
         this.type = type;
-
     }
 
-    public OrderKey getKey() {
-        return new OrderKey();
+    public UUID getUuid() {
+        return uuid;
     }
 
+    public long getUserId() {
+        return userId;
+    }
 
-    public static class OrderBuilder {
+    public long getQuantity() {
+        return quantity;
+    }
 
-        private long userId;
-        private BigDecimal quantity;
-        private BigDecimal pricePerKg;
-        private Type type;
+    public long getPricePerKg() {
+        return pricePerKg;
+    }
 
-        public OrderBuilder userId(long userId) {
-            this.userId = userId;
-            return this;
-        }
+    public Type getType() {
+        return type;
+    }
 
-        public OrderBuilder quantity(BigDecimal quantity) {
-            this.quantity = quantity;
-            return this;
-        }
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
 
-        public OrderBuilder pricePerKg(BigDecimal pricePerKg) {
-            this.pricePerKg = pricePerKg;
-            return this;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Order)) return false;
+        Order other = (Order) o;
+        if (uuid != other.uuid) return false;
+        if (userId != other.userId) return false;
+        if (quantity != other.quantity) return false;
+        if (pricePerKg != other.pricePerKg) return false;
+        if (type != other.type) return false;
 
-        public OrderBuilder type(Type type) {
-            this.type = type;
-            return this;
-        }
-
-        public Order build() {
-            if (type == null || quantity == null || pricePerKg == null) {
-                throw new NullPointerException();
-            }
-
-            if (quantity.scale() > 3) {
-                throw new IllegalArgumentException();
-            }
-
-
-            if (pricePerKg.scale() > 2) {
-                throw new IllegalArgumentException();
-            }
-
-            return new Order(UUID.randomUUID(),
-                             userId,
-                             quantity.movePointRight(3).intValue(),
-                             pricePerKg.movePointRight(2).intValue(),
-                             type);
-        }
+        return true;
     }
 }
