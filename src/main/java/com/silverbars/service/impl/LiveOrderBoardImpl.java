@@ -7,11 +7,15 @@ import com.silverbars.service.LiveOrderBoard;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 final public class LiveOrderBoardImpl implements LiveOrderBoard  {
+
+    private static final Function<Entry<OrderKey, Map<UUID, Order>>, Summary> SUMMARY_CONVERTOR_INSTANCE = new SummaryConvertor();
 
     private final Map<OrderKey, Map<UUID, Order>> sellOrderBoard = new ConcurrentHashMap<>();
 
@@ -47,13 +51,11 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
     public List<Summary> summary(Type type) {
 
         Map<OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(type);
+
         return orderBoard.entrySet()
                   .stream()
                   .sorted(Map.Entry.comparingByKey())
-                  .map(x -> {
-                      long grams = x.getValue().values().stream().mapToLong(Order::getQuantity).sum();
-                      return new Summary(grams, x.getKey().getPricePerKg());
-                  })
+                  .map(SUMMARY_CONVERTOR_INSTANCE)
                   .collect(Collectors.toList());
     }
 
