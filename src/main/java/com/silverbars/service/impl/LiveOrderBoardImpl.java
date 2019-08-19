@@ -5,12 +5,11 @@ import com.silverbars.domain.Order.Type;
 import com.silverbars.domain.Summary;
 import com.silverbars.service.LiveOrderBoard;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 final public class LiveOrderBoardImpl implements LiveOrderBoard  {
 
@@ -48,21 +47,14 @@ final public class LiveOrderBoardImpl implements LiveOrderBoard  {
     public List<Summary> summary(Type type) {
 
         Map<OrderKey, Map<UUID, Order>> orderBoard = selectOrderBoard(type);
-        List<Summary> summary = new ArrayList<>(orderBoard.size());
-        orderBoard.forEach(populateSummary(summary));
-
-        return summary;
-    }
-
-    private BiConsumer<? super OrderKey, ? super Map<UUID, Order>> populateSummary(List<Summary> buySummary) {
-        return (key, v) -> {
-            long grams = v.values().stream().mapToLong(Order::getQuantity).sum();
-            Summary summary = new Summary();
-            summary.setPricePerKg(key.getPricePerKg());
-            summary.setQuantity(grams);
-
-            buySummary.add(summary);
-        };
+        return orderBoard.entrySet()
+                  .stream()
+                  .sorted(Map.Entry.comparingByKey())
+                  .map(x -> {
+                      long grams = x.getValue().values().stream().mapToLong(Order::getQuantity).sum();
+                      return new Summary(grams, x.getKey().getPricePerKg());
+                  })
+                  .collect(Collectors.toList());
     }
 
 

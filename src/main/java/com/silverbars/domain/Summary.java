@@ -5,6 +5,12 @@ public final class Summary {
     long quantity;
     long pricePerKg;
 
+    public Summary(long quantity, long pricePerKg) {
+        super();
+        this.quantity = quantity;
+        this.pricePerKg = pricePerKg;
+    }
+
     public long getQuantity() {
         return quantity;
     }

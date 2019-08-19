@@ -115,7 +115,7 @@ final public class LiveOrderBoardImplTest {
 
         List<Summary> summary = liveOrderBoard.summary(BUY);
 
-        assertEquals("[1.33kg for £301.0, 12.33kg for £302.0, 10.33kg for £303.0]", summary.toString());
+        assertEquals("[10.33kg for £303.0, 12.33kg for £302.0, 1.33kg for £301.0]", summary.toString());
     }
 
 

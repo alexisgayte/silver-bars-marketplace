@@ -2,7 +2,7 @@ package com.silverbars.service.impl;
 
 import com.silverbars.domain.Order;
 
-public class OrderKey {
+public class OrderKey implements Comparable<OrderKey> {
 
     private final long pricePerKg;
     private final int denominator;
@@ -32,5 +32,11 @@ public class OrderKey {
         if (denominator != other.denominator) return false;
 
         return true;
+    }
+
+    @Override
+    public int compareTo(OrderKey o) {
+
+        return (int)((o.denominator * o.pricePerKg) - (denominator * pricePerKg));
     }
 }
